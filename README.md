@@ -1,43 +1,54 @@
-# zego_cloud_app
+# ZEGOCLOUD Video Call App
 
-A new Flutter project.
+A Flutter video-meeting app built on [ZEGOCLOUD's prebuilt Call UIKit](https://www.zegocloud.com/docs/uikit/callkit-flutter/overview) with [Clerk](https://clerk.com) for sign-in. Sign in, type a meeting ID, choose whether to join with audio and video on, and you're in a call with anyone else who entered the same ID.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **Sign in / sign up / sign out** with Clerk's prebuilt `ClerkAuthentication` UI.
+- **Join Meeting** screen: enter a meeting ID and toggle *Connect to audio* and *Turn on my video* before joining.
+- **Meeting**: `ZegoUIKitPrebuiltCall` with the camera and mic set from those toggles, plus a top bar with minimize, member list and sound-effect buttons. Your email is used as the user ID and display name.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
-# Environment Variables
-
-This application requires a `.env` file in the root directory with the following configuration parameters:
-
-## Required Environment Variables
-
-Create a `.env` file in the root directory of the project with the following variables:
+## How it works
 
 ```
-ZEGO_APP_ID="?"
-ZEGO_APP_SIGN="?"
-CLERK_KEY="?"
+lib/
+├── main.dart                      # loads .env, wraps the app in ClerkAuth
+├── data/config/env_config.dart    # singleton that reads ZEGO_APP_ID, ZEGO_APP_SIGN, CLERK_KEY
+└── presentation/
+    ├── login_page.dart            # Clerk sign-in
+    ├── join_meeting_page.dart     # meeting ID + audio/video toggles
+    └── meeting_page.dart          # ZegoUIKitPrebuiltCall
 ```
 
-## Important Notes
+`ClerkAuthBuilder` shows the login page when signed out and the join page when signed in.
 
-- The `.env` file is not included in the repository for security reasons
-- You must create this file manually before running the application
-- Without these environment variables, the application will not function properly
-- Make sure to never commit your `.env` file to version control
+## Tech stack
 
-## Getting Started
+- Flutter, Dart `^3.7.2`
+- `zego_uikit_prebuilt_call` 4.16
+- `clerk_flutter` (beta), `flutter_dotenv`, `gap`
 
-1. Copy the variables above into a new file named `.env` in the root directory
-2. Ensure there are no spaces around the equal signs
-3. Run the application as normal
+## Getting started
+
+### Environment variables
+
+The app needs a `.env` file in the project root (it's bundled as an asset and isn't committed):
+
+```
+ZEGO_APP_ID="<your ZEGOCLOUD app ID>"
+ZEGO_APP_SIGN="<your ZEGOCLOUD app sign>"
+CLERK_KEY="<your Clerk publishable key>"
+```
+
+- Get the app ID and app sign from the ZEGOCLOUD console.
+- Get the publishable key from your Clerk dashboard.
+- Don't put spaces around the `=` signs, and never commit `.env`.
+
+### Run
+
+```sh
+flutter pub get
+flutter run
+```
+
+Video calls need camera and microphone permissions, so test on a real device or a desktop with a webcam.
